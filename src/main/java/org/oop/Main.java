@@ -335,3 +335,134 @@ public class Main {
         foundArticles.forEach(a -> System.out.println("ID: " + a.id + ", Заголовок: " + a.title));
     }
 }
+
+/**
+ * Нарушение принципа DRY
+ * Строка:
+
+ * static void addArticle(D database) {
+ *     System.out.print("Введите название статьи: ");
+ *     String t = scanner.nextLine();
+ *     System.out.print("Введите содержимое статьи: ");
+ *     String c = scanner.nextLine();
+ *
+ *     Article newArticle = new Article(0L, t, c, loggedInUserId);
+ *     if(database.ca(newArticle) != null) System.out.println("Статья добавлена!");
+ *     else System.out.println("Ошибка при добавлении статьи.");
+ * }
+ * Нарушение:
+ * Принцип DRY  нарушен, так как логика добавления статьи дублируется в нескольких методах (например, createArticle и addArticle).
+ *
+ * Рекомендация:
+ * Объедините методы createArticle и addArticle в один, чтобы избежать дублирования кода.
+ *
+ Нарушение принципа KISS
+ * Строка:
+
+ * static void manageUsers(D database) {
+ *     printMenu("User Management", Arrays.asList("Add User", "Change Password", "Delete User", "View All Users", "Go Back"));
+ *     int choice = getChoice(Arrays.asList("Add User", "Change Password", "Delete User", "View All Users", "Go Back"));
+ *     switch (choice) {
+ *         case 1:
+ *             addUser(database); // method name does not match action exactly
+ *             break;
+ *         case 2:
+ *             changeUserPassword(database); // method name does not match action exactly
+ *             break;
+ *         case 3:
+ *             deleteUser(database); // method name does not match action exactly
+ *             break;
+ *         case 4:
+ *             listAllUsers(database); // method name does not match action exactly
+ *             break;
+ *         case 5:
+ *             printMenu("Main Menu", Arrays.asList("Войти", "Зарегистрироваться", "Выйти")); // Incorrect menu for "Go Back"
+ *             break;
+ *     }
+ * }
+ * Нарушение:
+ * Принцип KISS нарушен, так как метод manageUsers выполняет слишком много задач: отображение меню, обработку выбора пользователя и вызов других методов.
+ *
+ * Рекомендация:
+ * Разделите метод на более мелкие, каждый из которых будет выполнять одну задачу. Например, выделите логику отображения меню и обработки выбора в отдельные методы.
+ *
+Нарушение принципа YAGNI
+ * Строка:
+
+ * static void changeUserRole(long userId, Role newRole, D database) {
+ *     if (isAdministrator) {
+ *         boolean updated = database.cur((int) userId, newRole);
+ *         if (updated) {
+ *             System.out.println("Роль пользователя изменена.");
+ *         } else {
+ *             System.out.println("Не удалось изменить роль пользователя.");
+ *         }
+ *     } else {
+ *         System.out.println("Операция доступна только для администраторов.");
+ *     }
+ * }
+ * Нарушение:
+ * Принцип YAGNI  нарушен, так как метод changeUserRole может быть избыточным, если в текущей реализации эта функциональность не используется.
+ *
+ * Рекомендация:
+ * Убедитесь, что этот метод действительно необходим. Если он не используется, его можно удалить, чтобы упростить код.
+ *
+Нарушение принципа DRY
+ * Строка:
+ *
+ * static void listAllArticles(D database) {
+ *     database.ga().forEach(a -> System.out.println("ID: " + a.id + ", Заголовок: " + a.title));
+ * }
+ * Нарушение:
+ * Принцип DRY нарушен, так как логика вывода списка статей дублируется в методах viewArticles и listAllArticles.
+ *
+ * Рекомендация:
+ * Объедините методы viewArticles и listAllArticles в один, чтобы избежать дублирования кода.
+ *
+ Нарушение принципа KISS
+ * Строка:
+ *
+ * static void searchArticlesByTitle(D database) {
+ *     System.out.print("Введите заголовок статьи для поиска: ");
+ *     String title = scanner.nextLine();
+ *     List<Article> foundArticles = database.ga(title);
+ *     if (foundArticles.isEmpty()) System.out.println("Статьи не найдены.");
+ *     foundArticles.forEach(a -> System.out.println("ID: " + a.id + ", Заголовок: " + a.title));
+ * }
+ * Нарушение:
+ * Принцип KISS нарушен, так как метод searchArticlesByTitle выполняет слишком много задач: ввод данных, поиск статей и вывод результатов.
+ *
+ * Рекомендация:
+ * Разделите метод на более мелкие, каждый из которых будет выполнять одну задачу. Например, выделите логику ввода данных и вывода результатов в отдельные методы.
+ *
+Нарушение принципа YAGNI
+ * Строка:
+ *
+ * static void changeUserPassword(long userId, String newPassword, D database) {
+ *     boolean updated = database.cp((int) userId, newPassword);
+ *     if (updated) {
+ *         System.out.println("Пароль пользователя изменен.");
+ *     } else {
+ *         System.out.println("Не удалось изменить пароль пользователя.");
+ *     }
+ * }
+ * Нарушение:
+ * Принцип YAGNI нарушен, так как метод changeUserPassword может быть избыточным, если в текущей реализации эта функциональность не используется.
+ *
+ * Рекомендация:
+ * Убедитесь, что этот метод действительно необходим. Если он не используется, его можно удалить, чтобы упростить код.
+ *
+Нарушение принципа DRY
+ * Строка:
+ * static void deleteUser(D database) {
+ *     System.out.print("Введите ID пользователя для удаления: ");
+ *     int i = Integer.parseInt(scanner.nextLine());
+ *     if(database.du(i)) System.out.println("Успешно удален!");
+ *     else System.out.println("Ошибка при удалении пользователя.");
+ * }
+ * Нарушение:
+ * Принцип DRY нарушен, так как логика удаления пользователя дублируется в методах deleteUser и deleteUser(long userId, D database).
+ *
+ * Рекомендация:
+ * Объедините методы deleteUser и deleteUser(long userId, D database) в один, чтобы избежать дублирования кода.
+ */
